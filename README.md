@@ -1,5 +1,7 @@
 # urban-threads-shop
 ## Set up
+# Helloworld 18 Sep
+
 make venv then install requirements.txt:
 python3 -m venv proj_env
 
