@@ -63,7 +63,7 @@ def create_app():
     app.register_blueprint(admin, url_prefix='/')
 
 #comment out for first time initialization
-    with app.app_context():
-      create_database()
+    #with app.app_context():
+    #  create_database()
 
     return app
