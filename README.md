@@ -14,3 +14,5 @@ source proj_env/bin/activate
 ## How to run flask project
 
 flask --app main run
+
+test
