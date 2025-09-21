@@ -65,5 +65,6 @@ def create_app():
 #comment out for first time initialization
     #with app.app_context():
     #  create_database()
+      #create_database()
 
     return app
