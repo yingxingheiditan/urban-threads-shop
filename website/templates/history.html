@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %} Historic Sales Data {% endblock %}
+
+{% block body %}
+<h2>Historic Sales Data</h2>
+
+<input type="text" id="searchInput" placeholder="Search by Item Name..." onkeyup="filterTable()" 
+       class="form-control mb-3" style="max-width:400px;">
+
+<table id="historyTable" class="table table-dark table-hover table-bordered">
+    <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Date & Time</th>
+            <th>Item Name</th>
+            <th>Quantity Sold</th>
+            <th>Stock Before Sale</th>
+            <th>Stock After Sale</th>
+            <th>Region</th>
+            <th>Unit Price</th>
+            <th>Promotion Applied</th>
+            <th>Final Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in items.items %}
+        <tr>
+            <td>{{ item.TransactionID }}</td>
+            <td>{{ item.DateTime.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+            <td>{{ item.ItemName }}</td>
+            <td>{{ item.QuantitySold }}</td>
+            <td>{{ item.StockBeforeSale }}</td>
+            <td>{{ item.StockAfterSale }}</td>
+            <td>{{ item.Region }}</td>
+            <td>${{ "%.2f"|format(item.UnitPrice) }}</td>
+            <td>{{ 'Yes' if item.PromotionApplied else 'No' }}</td>
+            <td>${{ "%.2f"|format(item.FinalPrice) }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div class="mt-3">
+    {% if items.has_prev %}
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin.history', page=items.prev_num) }}">Previous</a>
+    {% endif %}
+    <span class="mx-2"> Page {{ items.page }} of {{ items.pages }} </span>
+    {% if items.has_next %}
+        <a class="btn btn-outline-light btn-sm" href="{{ url_for('admin.history', page=items.next_num) }}">Next</a>
+    {% endif %}
+</div>
+
+<script>
+function filterTable() {
+    let input = document.getElementById("searchInput");
+    let filter = input.value.toLowerCase();
+    let table = document.getElementById("historyTable");
+    let tr = table.getElementsByTagName("tr");
+
+    for (let i = 1; i < tr.length; i++) {  // skip header row
+        let td = tr[i].getElementsByTagName("td")[2]; // ItemName column
+        if (td) {
+            let textValue = td.textContent || td.innerText;
+            tr[i].style.display = textValue.toLowerCase().includes(filter) ? "" : "none";
+        }
+    }
+}
+</script>
+
+{% endblock %}
