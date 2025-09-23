@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, flash, send_from_directory, redirect
+from flask import Blueprint, render_template, flash, send_from_directory, redirect, request
 from flask_login import login_required, current_user
-from .forms import ShopItemsForm, OrderForm
 from werkzeug.utils import secure_filename
-from .models import Product, Order, Customer
+
+from .forms import ShopItemsForm, OrderForm
+from .models import Product, Order, Customer, HistoricSale
 from . import db
 
 
@@ -28,21 +29,18 @@ def add_shop_items():
             flash_sale = form.flash_sale.data
 
             file = form.product_picture.data
-
             file_name = secure_filename(file.filename)
-
             file_path = f'./media/{file_name}'
-
             file.save(file_path)
 
-            new_shop_item = Product()
-            new_shop_item.product_name = product_name
-            new_shop_item.current_price = current_price
-            new_shop_item.previous_price = previous_price
-            new_shop_item.in_stock = in_stock
-            new_shop_item.flash_sale = flash_sale
-
-            new_shop_item.product_picture = file_path
+            new_shop_item = Product(
+                product_name=product_name,
+                current_price=current_price,
+                previous_price=previous_price,
+                in_stock=in_stock,
+                flash_sale=flash_sale,
+                product_picture=file_path
+            )
 
             try:
                 db.session.add(new_shop_item)
@@ -73,7 +71,6 @@ def shop_items():
 def update_item(item_id):
     if current_user.id == 1:
         form = ShopItemsForm()
-
         item_to_update = Product.query.get(item_id)
 
         form.product_name.render_kw = {'placeholder': item_to_update.product_name}
@@ -90,26 +87,25 @@ def update_item(item_id):
             flash_sale = form.flash_sale.data
 
             file = form.product_picture.data
-
             file_name = secure_filename(file.filename)
             file_path = f'./media/{file_name}'
-
             file.save(file_path)
 
             try:
-                Product.query.filter_by(id=item_id).update(dict(product_name=product_name,
-                                                                current_price=current_price,
-                                                                previous_price=previous_price,
-                                                                in_stock=in_stock,
-                                                                flash_sale=flash_sale,
-                                                                product_picture=file_path))
-
+                Product.query.filter_by(id=item_id).update(dict(
+                    product_name=product_name,
+                    current_price=current_price,
+                    previous_price=previous_price,
+                    in_stock=in_stock,
+                    flash_sale=flash_sale,
+                    product_picture=file_path
+                ))
                 db.session.commit()
                 flash(f'{product_name} updated Successfully')
-                print('Product Upadted')
+                print('Product Updated')
                 return redirect('/shop-items')
             except Exception as e:
-                print('Product not Upated', e)
+                print('Product not Updated', e)
                 flash('Item Not Updated!!!')
 
         return render_template('update_item.html', form=form)
@@ -138,9 +134,24 @@ def delete_item(item_id):
 @login_required
 def order_view():
     if current_user.id == 1:
-        orders = Order.query.all()
+        orders = Order.query.order_by(Order.id.desc()).all()
         return render_template('view_orders.html', orders=orders)
     return render_template('404.html')
+
+
+##########################  SQL #################################################
+@admin.route('/history', methods=['GET'])
+@login_required
+def history():
+    if current_user.id == 1:  # admin only
+        page = request.args.get('page', 1, type=int)
+        per_page = 50
+        items = HistoricSale.query.order_by(HistoricSale.DateTime.desc()) \
+                  .paginate(page=page, per_page=per_page)
+        total = HistoricSale.query.count()
+        return render_template('history.html', items=items, total=total)
+    return render_template('404.html')
+##########################  SQL #################################################
 
 
 @admin.route('/update-order/<int:order_id>', methods=['GET', 'POST'])
@@ -148,13 +159,11 @@ def order_view():
 def update_order(order_id):
     if current_user.id == 1:
         form = OrderForm()
-
         order = Order.query.get(order_id)
 
         if form.validate_on_submit():
             status = form.order_status.data
             order.status = status
-
             try:
                 db.session.commit()
                 flash(f'Order {order_id} Updated successfully')
