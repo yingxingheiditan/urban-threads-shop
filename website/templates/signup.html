@@ -1,37 +1,44 @@
 {% extends 'forms.html' %}
-
-{% block title %} Sign Up {% endblock %}
+{% block title %}Sign Up{% endblock %}
 
 {% block body %}
-
-<!-- Sign Up section start -->
-
 <section class="base" id="base-signup">
-    <div class="base-content">
-        <div class="form">
-            <h3>
-                Create an account <br> to shop
-            </h3>
-            
-            <hr class="first">
-            <form method="POST">
-                {{ form.hidden_tag() }}
+  <div class="base-content">
+    <div class="form">
+      <h3>Create an Account</h3>
+      <p class="form-subtitle">Join Urban Threads and rep your local hood</p>
 
-                <div class="email"><h4>Email Address</h4>{{ form.email }} <hr> </div>
-                <div class="name"><h4>User Name</h4>{{ form.username }} <hr></div>
-                <div class="password"><h4>Password</h4>{{ form.password1 }} <hr></div>
-                <div class="password"><h4>Confirm Passowrd</h4>{{ form.password2 }} <hr></div>
+      <form method="POST">
+        {{ form.hidden_tag() }}
 
-                <div class="buttons">
-                    <a href="/login"> Login</a>
-                    {{ form.submit() }}
-                </div>
-
-
-            </form>
+        <div class="email">
+          <h4>Email Address</h4>
+          {{ form.email(class="form-control", placeholder="Enter your email") }}
         </div>
+
+        <div class="name">
+          <h4>Username</h4>
+          {{ form.username(class="form-control", placeholder="Choose a username") }}
+        </div>
+
+        <div class="password">
+          <h4>Password</h4>
+          {{ form.password1(class="form-control", placeholder="Create a password") }}
+        </div>
+
+        <div class="password">
+          <h4>Confirm Password</h4>
+          {{ form.password2(class="form-control", placeholder="Confirm your password") }}
+        </div>
+
+        {{ form.submit(class="btn btn-primary w-100 mt-3", value="Sign Up") }}
+
+        <div class="buttons">
+          <span>Already have an account?</span>
+          <a href="{{ url_for('auth.login') }}">Login</a>
+        </div>
+      </form>
     </div>
+  </div>
 </section>
-
-
 {% endblock %}

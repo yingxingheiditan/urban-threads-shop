@@ -1,45 +1,346 @@
-.d-flex .btn{
-    background: orange;
-    border: 2px solid orange;
-    border-radius: 8px;
-    color: #fff;
-}
-.d-flex .btn:hover{
-    background: rgb(228, 150, 7);
-    border: 2px solid rgb(228, 150, 7);
+/* ===== GENERAL ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-#right1 :hover{
-    color: orange;
-    transition: 300ms;
+body {
+  background-color: #ffffff;
+  font-family: "Poppins", sans-serif;
+  color: #111;
+  overflow-x: hidden;
 }
 
-.row .right2 {
-    margin-left: -10px;
-    height: 180px;
-    width: 180px;
-    border-radius: 10px;
+/* ===== NAVBAR ===== */
+.navbar {
+  background-color: #fff;
+  border-bottom: 2px solid #ff00a6;
+  padding: 12px 20px;
 }
 
-.container .row .col .row .col a {
-    background-color: orange;
-    padding: 10px;
-    border-radius: 10px;
-    text-decoration: none;
-    color: white;
-
+.navbar-brand {
+  font-weight: 700;
+  color: #000;
+  letter-spacing: 1px;
+  font-size: 1.3rem;
 }
 
-.container .row .col .row .col a :hover {
-    background-color: rgb(201, 132, 5);
-}
-#column :hover{
-    transform: scale(0.9);
-    transition: 450ms;
-    border-radius: 10px;
+.navbar-brand i {
+  color: #ff00a6;
 }
 
-#items :hover {
-    color: orange;
-    transition: 200ms;
+.nav-link {
+  color: #000 !important;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.nav-link:hover {
+  color: #ff00a6 !important;
+}
+
+/* ===== HERO SECTION ===== */
+.hero {
+  height: 90vh;
+  background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #111;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.hero h1 {
+  font-size: 3.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, #00ffcc, #ff00a6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+.hero .btn {
+  background: linear-gradient(90deg, #00ffcc, #ff00a6);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 40px;
+  padding: 10px 30px;
+  transition: 0.3s;
+}
+
+.hero .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ff00a6;
+}
+
+/* ===== FEATURED CATEGORIES ===== */
+.category-card {
+  border-radius: 12px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.category-img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* ===== NEW ARRIVALS PAGE ===== */
+.card {
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+.card-title {
+  font-weight: 600;
+  color: #111;
+}
+
+.btn-dark {
+  background: linear-gradient(90deg, #00ffcc, #ff00a6);
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: 0.3s;
+}
+
+.btn-dark:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255,0,166,0.5);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background-color: #f9f9f9;
+  border-top: 2px solid #ff00a6;
+  color: #000;
+  padding: 30px 0;
+}
+
+footer h5 {
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+footer p {
+  color: #000;
+}
+
+footer a {
+  color: #000;
+  text-decoration: none;
+  margin: 0 8px;
+  transition: 0.3s;
+}
+
+footer a:hover {
+  color: #ff00a6;
+  text-decoration: underline;
+}
+
+.social-icons a {
+  color: #000;
+  margin: 0 6px;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+.social-icons a:hover {
+  color: #ff00a6;
+}
+
+/* ===== LOGIN + SIGN-UP BACKGROUND ===== */
+#base-login,
+#base-signup {
+  min-height: 100vh;
+  background-image: url('https://urbanthreads.blob.core.windows.net/new-arrivals/Login_page.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== CENTER CONTAINER ===== */
+.base-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+}
+
+/* ===== MODERN FORM (LOGIN + SIGN-UP) ===== */
+.form {
+  background: rgba(255, 255, 255, 0.92);
+  padding: 20px 25px;
+  border-radius: 16px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  width: 90%;
+  max-width: 300px;
+  transition: transform 0.3s ease;
+  backdrop-filter: blur(10px);
+  margin: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form:hover {
+  transform: translateY(-3px);
+}
+
+/* ===== TITLES ===== */
+.form h3,
+.login-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 2.1rem;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #00ffcc, #ff00a6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 5px;
+}
+
+.form-subtitle,
+.login-subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 15px;
+}
+
+/* ===== LABELS ===== */
+.form h4,
+label {
+  font-size: 0.85rem;
+  text-align: left;
+  color: #333;
+  margin-bottom: 4px;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+}
+
+/* ===== INPUTS ===== */
+.form input,
+.form-control {
+  width: 100%;
+  padding: 7px 14px;
+  border-radius: 40px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  outline: none;
+  font-family: "Inter", sans-serif;
+  transition: 0.3s;
+}
+
+.form input:focus,
+.form-control:focus {
+  border-color: #ff00a6;
+  box-shadow: 0 0 5px rgba(255, 0, 166, 0.25);
+}
+
+/* ===== BUTTONS ===== */
+.form input[type="submit"],
+.form button,
+.form .btn {
+  background: linear-gradient(90deg, #00ffcc, #ff00a6);
+  border: none;
+  padding: 8px 20px;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 40px;
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  transition: 0.3s;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.form input[type="submit"]:hover,
+.form button:hover,
+.form .btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #ff00a6;
+}
+
+/* ===== LINKS ===== */
+.buttons,
+.signup-text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-family: "Inter", sans-serif;
+  color: #555;
+}
+
+.buttons a,
+.signup-text a {
+  color: #ff00a6;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.buttons a:hover,
+.signup-text a:hover {
+  color: #00ffcc;
+  text-decoration: underline;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .form {
+    padding: 16px 18px;
+    max-width: 270px;
+  }
+
+  .form h3,
+  .login-title {
+    font-size: 1.9rem;
+  }
+
+  .hero h1 {
+    font-size: 2.4rem;
+  }
+
+  .category-img {
+    height: 300px;
+  }
+
+  .card img {
+    height: 300px;
+  }
 }
