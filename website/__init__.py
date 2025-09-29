@@ -12,7 +12,7 @@ db = SQLAlchemy()
 # Azure SQL credentials
 SQL_USER = "urban_data"
 SQL_PASSWORD = "admin001*"
-SQL_SERVER = "urbanserver001db.database.windows.net"
+SQL_SERVER = "urbanserver002db.database.windows.net"
 SQL_DB = "historical_sales_data"
 
 
