@@ -1,88 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Bootstrap & FontAwesome -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+
+  <!-- ✅ Font Awesome (Full CDN with Brand Icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" />
+
+  <!-- Local CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/all.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
   <title>Urban Threads | {% block title %}{% endblock %}</title>
 
-  <!-- ✅ Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* ✅ Rounded search bar with pink hover accent */
+    .search-form input {
+      border-radius: 20px;
+      padding: 6px 15px;
+      border: 1px solid #ccc;
+      width: 230px;
+      transition: all 0.3s ease;
+    }
 
-  <!-- ✅ Font Awesome & Bootstrap Icons -->
-  <script src="https://kit.fontawesome.com/e24507d923.js" crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    .search-form input:focus {
+      outline: none;
+      border-color: #ff00a6;
+      box-shadow: 0 0 5px rgba(255, 0, 166, 0.3);
+    }
 
-  <!-- ✅ Custom CSS -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    .search-form button {
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      background-color: #ff00a6;
+      color: #fff;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .search-form button:hover {
+      background-color: #e60098;
+    }
+  </style>
 </head>
-<body>
-  <!-- ✅ Navbar -->
-  <nav class="navbar navbar-expand-lg fixed-top shadow-sm bg-white">
+
+<body style="background-color: #ffffff; color: #000; font-family: 'Poppins', sans-serif;">
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar navbar-expand-lg shadow-sm" style="background-color: #fff;">
     <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="{{ url_for('views.home') }}">
-        <i class="fa-solid fa-shirt me-2"></i> URBAN THREADS
+      <!-- Brand -->
+      <a class="navbar-brand fw-bold" href="/" style="font-size: 26px; letter-spacing: 1px; color: #000;">
+        <i class="fa-solid fa-shirt me-2" style="color: #ff00a6;"></i> Urban Threads
       </a>
 
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <!-- Toggler -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+              aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('views.new_arrivals') }}">New Arrivals</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Men</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Women</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">Sale</a></li>
+      <!-- Links -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Left links -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          
+          <!-- ✅ New Arrivals -->
+          <li class="nav-item">
+            <a class="nav-link text-dark text-nowrap" href="/new-arrivals" style="font-size: 17px;">New Arrivals</a>
+          </li>
+
+          <!-- ✅ Men -->
+          <li class="nav-item">
+            <a class="nav-link active text-dark" href="/men" style="font-size: 17px;">Men</a>
+          </li>
+
+          <!-- ✅ Women -->
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/women" style="font-size: 17px;">Women</a>
+          </li>
+
+          <!-- ✅ Accessories -->
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/accessories" style="font-size: 17px;">Accessories</a>
+          </li>
+
+          <!-- ✅ All (added beside Accessories) -->
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/all" style="font-size: 17px;">All</a>
+          </li>
         </ul>
 
-        <ul class="navbar-nav align-items-center">
-          <li class="nav-item me-3">
-            <a href="#" class="nav-link"><i class="fa-regular fa-heart me-1"></i> Wishlist</a>
-          </li>
-          <li class="nav-item me-3">
-            <a href="#" class="nav-link"><i class="fa-solid fa-cart-shopping me-1"></i> Cart</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown">
-              <i class="fa-regular fa-user me-1"></i> Account
+        <!-- ✅ Search bar (right-aligned with magnifying glass icon) -->
+        <form class="search-form d-flex ms-auto" role="search" action="/search" method="POST">
+          <input name="search" type="search" placeholder="Search products..." aria-label="Search">
+          <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </form>
+
+        <!-- Right section -->
+        <ul class="navbar-nav mb-2 mb-lg-0 ms-3">
+
+          <!-- Cart -->
+          <li class="nav-item mx-2">
+            <a class="nav-link text-dark d-flex align-items-center" href="/cart">
+              <span>Cart</span>
+              <i class="fa-solid fa-cart-shopping ms-2"></i>
             </a>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><a class="dropdown-item" href="{{ url_for('auth.login') }}">Login</a></li>
-              <li><a class="dropdown-item" href="{{ url_for('auth.sign_up') }}">Sign Up</a></li>
+          </li>
+
+          <!-- Wishlist -->
+          <li class="nav-item mx-2">
+            <a class="nav-link text-dark d-flex align-items-center" href="/wishlist">
+              <span>Wishlist</span>
+              <i class="fa-solid fa-heart ms-2"></i>
+            </a>
+          </li>
+
+          <!-- Account Dropdown -->
+          <li class="nav-item dropdown mx-2">
+            <a class="nav-link dropdown-toggle text-dark" href="#" id="accountDropdown"
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa-regular fa-user me-1"></i>
+              {% if current_user.is_authenticated %}
+                {{ current_user.first_name }}
+              {% else %}
+                Account
+              {% endif %}
+            </a>
+
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+              {% if current_user.is_authenticated %}
+                <li>
+                  <a class="dropdown-item" href="/profile/{{ current_user.id }}">
+                    Profile <i class="fa-solid fa-user ms-1"></i>
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/orders">
+                    Orders <i class="fa-solid fa-truck-fast ms-1"></i>
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="/logout">
+                    Log Out <i class="fa-solid fa-right-from-bracket ms-1"></i>
+                  </a>
+                </li>
+              {% else %}
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('auth.login') }}">
+                    Login <i class="fa-solid fa-right-to-bracket ms-1"></i>
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item" href="{{ url_for('auth.sign_up') }}">
+                    Sign Up <i class="fa-solid fa-user-plus ms-1"></i>
+                  </a>
+                </li>
+              {% endif %}
             </ul>
           </li>
+
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- ✅ Main Content -->
-  <main class="container content-wrapper">
-    {% block body %}{% endblock %}
-  </main>
+  <!-- ===== FLASH MESSAGES ===== -->
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-success alert-dismissible fade show text-center" role="alert" style="margin-top: 10px;">
+    <strong>{{ message }}</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
 
-  <!-- ✅ Footer -->
-  <footer class="footer mt-auto py-4">
-    <div class="container text-center text-md-start">
-      <div class="row">
-        <div class="col-md-6">
-          <h5 class="footer-title">Urban Threads</h5>
-          <p class="footer-tagline">Rep your local hood — Fashion for the urban lifestyle</p>
-          <p><a href="#">About Us</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a></p>
-        </div>
-        <div class="col-md-6 text-md-end">
-          <p><strong>Global | Singapore</strong></p>
-          <div class="social-icons">
-            <a href="#"><i class="bi bi-facebook"></i></a>
-            <a href="#"><i class="bi bi-instagram"></i></a>
-            <a href="#"><i class="bi bi-youtube"></i></a>
-          </div>
-        </div>
-      </div>
+  <!-- ===== MAIN BODY ===== -->
+  {% block body %}
+  {% endblock %}
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="container-fluid text-center p-3 mt-5" style="background-color: #f9f9f9; border-top: 2px solid #ff00a6;">
+    <h5 class="fw-bold" style="color: #000;">Urban Threads</h5>
+    <p style="color: #000;">Rep Your Local Hood — Fashion for the Urban Lifestyle</p>
+    <p>
+      <a href="#" class="text-dark mx-2 text-decoration-none">About Us</a> |
+      <a href="#" class="text-dark mx-2 text-decoration-none">Contact</a> |
+      <a href="#" class="text-dark mx-2 text-decoration-none">Privacy Policy</a>
+    </p>
+    <p><strong>Global | Singapore</strong></p>
+
+    <div class="mt-2">
+      <a href="#" class="text-dark mx-2"><i class="fa-brands fa-facebook-f"></i></a>
+      <a href="#" class="text-dark mx-2"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#" class="text-dark mx-2"><i class="fa-brands fa-x-twitter"></i></a>
     </div>
+
+    <p class="mt-3 mb-0" style="color: #000;">© 2025 Urban Threads. All Rights Reserved.</p>
   </footer>
 
-  <!-- ✅ Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- ===== JS SCRIPTS ===== -->
+  <script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/all.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/myScript.js') }}"></script>
 </body>
 </html>

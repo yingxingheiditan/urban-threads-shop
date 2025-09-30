@@ -33,7 +33,7 @@ def new_arrivals():
 
 ### TO BE CHANGED
 @views.route('/products')
-def home():
+def products():
 
     items = Product.query.filter_by(flash_sale=True)
 
