@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}New Arrivals{% endblock %}
+
+{% block body %}
+<div class="container mt-5 py-5">
+  <h2 class="mb-4 text-center fw-bold" style="letter-spacing:1px;"> New Arrivals </h2>
+  
+  <div class="row">
+    {% for item in items %}
+      <div class="col-md-4 col-sm-6 mb-4">
+        <div class="card h-100 shadow-sm border-0">
+          <img src="{{ item.image_url }}" 
+               class="card-img-top"
+               alt="{{ item.name }}"
+               style="height: 400px; object-fit: cover; border-radius: 10px;">
+
+          <div class="card-body text-center">
+            <h5 class="card-title fw-semibold">{{ item.name }}</h5>
+            <p class="card-text text-muted">SGD {{ "%.2f"|format(item.price) }}</p>
+            <a href="#" class="btn btn-dark w-100">Shop Now</a>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
