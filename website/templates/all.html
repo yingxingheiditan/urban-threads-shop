@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}All Products{% endblock %}
 
-{% block content %}
+{% block body %}
 <div class="container py-5">
   <h2 class="text-center mb-4 fw-bold" style="letter-spacing: 1px;">All Collections</h2>
-
+  
   {% if items|length == 0 %}
     <p class="text-center text-muted">No products available at the moment.</p>
   {% else %}

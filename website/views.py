@@ -35,7 +35,7 @@ def new_arrivals():
 @views.route('/all')
 def all():
 
-    items = Product.query.filter_by(flash_sale=True)
+    items = Product.query.order_by(Product.flash_sale.desc()).all()
 
     return render_template('all.html', items=items, cart=Cart.query.filter_by(customer_link=current_user.id).all()
                            if current_user.is_authenticated else [])
