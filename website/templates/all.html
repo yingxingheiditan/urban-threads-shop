@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}All Products{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <h2 class="text-center mb-4 fw-bold" style="letter-spacing: 1px;">All Collections</h2>
+
+  {% if items|length == 0 %}
+    <p class="text-center text-muted">No products available at the moment.</p>
+  {% else %}
+    <div class="row g-4 justify-content-center">
+      {% for p in items %}
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="card border-0 shadow-sm h-100" style="transition: transform 0.2s ease;">
+            
+            <!-- Product Image -->
+            <div class="position-relative overflow-hidden">
+              <img src="{{ p.product_picture }}" 
+                   class="card-img-top" 
+                   alt="{{ p.product_name }}" 
+                   style="height: 280px; object-fit: cover; border-radius: 6px;">
+              {% if p.flash_sale %}
+                <span class="badge bg-danger position-absolute top-0 start-0 m-2">FLASH SALE</span>
+              {% endif %}
+            </div>
+
+            <!-- Product Info -->
+            <div class="card-body text-center">
+              <h6 class="card-title text-uppercase fw-semibold text-truncate">{{ p.product_name }}</h6>
+
+              <div class="mb-2">
+                <span class="fw-bold">S$ {{ '%.2f'|format(p.current_price) }}</span>
+                {% if p.previous_price > p.current_price %}
+                  <small class="text-muted text-decoration-line-through ms-1">
+                    S$ {{ '%.2f'|format(p.previous_price) }}
+                  </small>
+                {% endif %}
+              </div>
+
+              {% if p.in_stock > 0 %}
+                <span class="badge bg-success mb-2">In Stock</span>
+              {% else %}
+                <span class="badge bg-secondary mb-2">Out of Stock</span>
+              {% endif %}
+
+              <a href="{{ url_for('views.add_to_cart', item_id=p.id) }}" 
+                 class="btn btn-dark btn-sm w-100">
+                Add to Cart
+              </a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<!-- Subtle hover + button style -->
+<style>
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.btn-dark:hover {
+  background: linear-gradient(90deg, #ff00a6, #00ff88);
+  color: #fff;
+  border: none;
+}
+.card-title {
+  color: #111;
+  letter-spacing: 0.5px;
+}
+</style>
+{% endblock %}

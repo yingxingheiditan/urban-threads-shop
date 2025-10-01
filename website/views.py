@@ -32,12 +32,12 @@ def new_arrivals():
     return render_template("new_arrivals.html", items=items, user=current_user)
 
 ### TO BE CHANGED
-@views.route('/products')
-def products():
+@views.route('/all')
+def all():
 
     items = Product.query.filter_by(flash_sale=True)
 
-    return render_template('home.html', items=items, cart=Cart.query.filter_by(customer_link=current_user.id).all()
+    return render_template('all.html', items=items, cart=Cart.query.filter_by(customer_link=current_user.id).all()
                            if current_user.is_authenticated else [])
 
 
