@@ -1,0 +1,158 @@
+trigger:
+  - main
+
+variables:
+  # Container Registry Service Connection
+  dockerRegistryServiceConnection: 'my-acr-connection'
+  kubernetesServiceConnection: 'ut-cluster-default'
+  imageRepository: 'flaskapp'
+  containerRegistry: 'akstesth.azurecr.io'
+  dockerfilePath: 'Dockerfile'
+  version: '1.0.0'
+  tag: '$(version)-$(Build.BuildId)'
+  
+  # Agent VM image
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build and push stage
+  jobs:
+  - job: Build
+    displayName: Build with Environment File
+    pool: Default
+    steps:
+    # Download the secure .env file
+    - task: DownloadSecureFile@1
+      displayName: 'Download .env file'
+      name: envFile  # This name will be used to reference the file
+      inputs:
+        secureFile: '.env'  # Name of your uploaded secure file
+
+    # Copy .env file to build context
+    - task: CopyFiles@2
+      displayName: 'Copy .env to build context'
+      inputs:
+        sourceFolder: '$(Agent.TempDirectory)'
+        contents: '**/*.env'
+        targetFolder: '$(Build.SourcesDirectory)'
+        overWrite: true
+
+    - task: Docker@2
+      displayName: Build and push Docker image
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
+          latest
+
+- stage: Deploy
+  displayName: Deploy to AKS
+  dependsOn: Build
+  jobs:
+  - job: Deploy
+    displayName: Deploy to AKS
+    pool:
+      name: Default  # Using your Default agent pool
+    steps:
+    # Download the secure .env file again for deployment
+    - task: DownloadSecureFile@1
+      displayName: 'Download .env for Kubernetes'
+      name: envFile
+      inputs:
+        secureFile: '.env'
+
+   # Create or Update Kubernetes Secret from .env file
+    - task: Bash@3
+      displayName: 'Create/Update Secret from .env file'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # Use kubectl apply which works for both create and update
+          kubectl create secret generic app-env-file \
+            --from-file=.env=$(envFile.secureFilePath) \
+            --dry-run=client -o yaml | kubectl apply -f -
+          echo "Secret 'app-env-file' created/updated successfully"
+
+    - task: KubernetesManifest@0
+      displayName: Create imagePullSecret
+      inputs:
+        action: createSecret
+        secretName: 'acr-auth'
+        dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+        kubernetesServiceConnection: $(kubernetesServiceConnection)
+        
+    - task: KubernetesManifest@0
+      displayName: Deploy to Kubernetes
+      inputs:
+        action: deploy
+        manifests: |
+          deployment.yaml
+        imagePullSecrets: |
+          acr-auth
+        containers: |
+          $(containerRegistry)/$(imageRepository):$(tag)
+        kubernetesServiceConnection: $(kubernetesServiceConnection)
+    
+    # Sets image in shell script
+    - task: Bash@3
+      displayName: 'Update container image (kubectl set)'
+      inputs:
+        targetType: 'inline'
+        script: |
+          kubectl set image deployment/flask-app \
+            flask-app=$(containerRegistry)/$(imageRepository):$(tag) \
+            -n default
+        
+    - task: Kubernetes@1
+      displayName: Check pods immediately
+      inputs:
+        command: get
+        arguments: 'pods -l app=flask-app -o wide'
+        kubernetesServiceEndpoint: $(kubernetesServiceConnection)
+        
+    - task: Kubernetes@1
+      displayName: Check pod events
+      inputs:
+        command: describe
+        arguments: 'pods -l app=flask-app'
+        kubernetesServiceEndpoint: $(kubernetesServiceConnection)
+        
+    - task: Kubernetes@1
+      displayName: Check deployment status
+      inputs:
+        command: describe
+        arguments: 'deployment flask-app'
+        kubernetesServiceEndpoint: $(kubernetesServiceConnection)
+
+    - task: Kubernetes@1
+      displayName: Verify deployment
+      inputs:
+        command: get
+        arguments: 'pods -l app=flask-app'
+        kubernetesServiceEndpoint: $(kubernetesServiceConnection)
+    
+    - task: Kubernetes@1
+      displayName: 'Check Flask App Logs'
+      inputs:
+        command: logs
+        arguments: '-l app=flask-app --all-containers=true --prefix=true'
+        kubernetesServiceEndpoint: $(kubernetesServiceConnection)
+    
+    - task: Kubernetes@1
+      displayName: 'Check Secret Mount'
+      inputs:
+        command: exec
+        arguments: 'deployment/flask-app -- ls -la /app/'
+        kubernetesServiceEndpoint: $(kubernetesServiceConnection)
+
+    - task: Bash@3
+      displayName: 'Clean up sensitive files'
+      inputs:
+            targetType: 'inline'
+            script: |
+              # Securely remove the .env file after use
+              shred -u $(envFile.secureFilePath) 2>/dev/null || rm -P $(envFile.secureFilePath) 2>/dev/null || rm -f $(envFile.secureFilePath)
