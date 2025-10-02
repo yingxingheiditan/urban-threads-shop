@@ -85,3 +85,15 @@ class HistoricSale(db.Model):
     UnitPrice = db.Column(db.Float, nullable=False)
     PromotionApplied = db.Column(db.String(50), nullable=False)
     FinalPrice = db.Column(db.Float, nullable=False)
+
+
+#######$
+class PredictedInventory(db.Model):
+    __tablename__ = 'PredictedInventory'
+    id = db.Column(db.Integer, primary_key=True)
+    item_name = db.Column(db.String(500))
+    predicted_sales = db.Column(db.Float)
+    current_stock = db.Column(db.Integer)
+    def __str__(self):
+        return f"<PredictedInventory {self.item_name}: Predicted={self.predicted_sales}, Stock={self.current_stock}>"
+#######$

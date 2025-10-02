@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 
 from .forms import ShopItemsForm, OrderForm
-from .models import Product, Order, Customer, HistoricSale
+from .models import Product, Order, Customer, HistoricSale, PredictedInventory 
 from . import db
 
 
@@ -193,3 +193,13 @@ def admin_page():
     if current_user.id == 1:
         return render_template('admin.html')
     return render_template('404.html')
+
+##########################  Prediction #################################################
+@admin.route('/predicted_inventory')
+@login_required
+def predicted_inventory():
+    if current_user.id == 1:  # Admin only
+        items = PredictedInventory.query.all()
+        return render_template('predicted_inventory.html', items=items)
+    return render_template('404.html')
+##########################  Prediction #################################################
