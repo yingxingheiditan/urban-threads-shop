@@ -4,7 +4,7 @@
 {% block body %}
 <div class="container py-5">
   <h2 class="text-center mb-4 fw-bold" style="letter-spacing: 1px;">All Collections</h2>
-  
+
   {% if items|length == 0 %}
     <p class="text-center text-muted">No products available at the moment.</p>
   {% else %}
@@ -43,7 +43,7 @@
                 <span class="badge bg-secondary mb-2">Out of Stock</span>
               {% endif %}
 
-              <a href="{{ url_for('views.add_to_cart', item_id=p.id) }}" 
+              <a href="/add-to-cart/{{ p.id }}" 
                  class="btn btn-dark btn-sm w-100">
                 Add to Cart
               </a>
