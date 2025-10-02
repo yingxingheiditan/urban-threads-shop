@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, flash, send_from_directory, redirect, request
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
-
+import calendar
+from sqlalchemy import func, extract
 from .forms import ShopItemsForm, OrderForm
 from .models import Product, Order, Customer, HistoricSale, PredictedInventory 
 from . import db
@@ -140,17 +141,87 @@ def order_view():
 
 
 ##########################  SQL #################################################
-@admin.route('/history', methods=['GET'])
-@login_required
+@admin.route('/history')
 def history():
-    if current_user.id == 1:  # admin only
-        page = request.args.get('page', 1, type=int)
-        per_page = 50
-        items = HistoricSale.query.order_by(HistoricSale.DateTime.desc()) \
-                  .paginate(page=page, per_page=per_page)
-        total = HistoricSale.query.count()
-        return render_template('history.html', items=items, total=total)
-    return render_template('404.html')
+    page = request.args.get('page', 1, type=int)
+
+    # Get filters from query string
+    filters = {
+        'TransactionID': request.args.get('TransactionID'),
+        'DateTime': request.args.get('DateTime'),
+        'ItemName': request.args.get('ItemName'),
+        'QuantitySold': request.args.get('QuantitySold'),
+        'StockBeforeSale': request.args.get('StockBeforeSale'),
+        'StockAfterSale': request.args.get('StockAfterSale'),
+        'Region': request.args.get('Region'),
+        'UnitPrice': request.args.get('UnitPrice'),
+        'PromotionApplied': request.args.get('PromotionApplied'),
+        'FinalPrice': request.args.get('FinalPrice')
+    }
+
+    # Sorting parameters
+    sort_col = request.args.get('sort_col', 'DateTime')
+    sort_dir = request.args.get('sort_dir', 'desc')
+
+    query = HistoricSale.query
+
+    # Apply filters
+    for col, value in filters.items():
+        if value:
+            if col == "PromotionApplied":
+                query = query.filter(getattr(HistoricSale, col) == (value == "Yes"))
+            elif col == "DateTime":
+                month_number = list(calendar.month_name).index(value)
+                query = query.filter(extract('month', HistoricSale.DateTime) == month_number)
+            else:
+                query = query.filter(getattr(HistoricSale, col) == value)
+
+    # Apply sorting
+    if hasattr(HistoricSale, sort_col):
+        column = getattr(HistoricSale, sort_col)
+        if sort_dir == 'asc':
+            query = query.order_by(column.asc())
+        else:
+            query = query.order_by(column.desc())
+    else:
+        query = query.order_by(HistoricSale.DateTime.desc())
+
+    # Count filtered rows
+    filtered_count = query.count()
+
+    # Pagination
+    items = query.paginate(page=page, per_page=50)
+
+    # Distinct values for dropdowns
+    distinct_values = {}
+    for col in filters.keys():
+        if col == "DateTime":
+            months = sorted(
+                db.session.query(func.distinct(extract('month', HistoricSale.DateTime))).all(),
+                key=lambda x: x[0]
+            )
+            distinct_values[col] = [calendar.month_name[int(m[0])] for m in months]
+        elif col == "PromotionApplied":
+            distinct_values[col] = ["Yes", "No"]
+        else:
+            vals = [v[0] for v in db.session.query(func.distinct(getattr(HistoricSale, col))).all()]
+            try:
+                vals = sorted(vals, key=lambda x: float(x))  # numeric
+            except (ValueError, TypeError):
+                vals = sorted(vals, key=lambda x: str(x).lower())  # text
+            distinct_values[col] = vals
+
+    return render_template(
+        "history.html",
+        items=items,
+        distinct_values=distinct_values,
+        filters=filters,
+        filtered_count=filtered_count
+    )
+
+
+
+
 ##########################  SQL #################################################
 
 
