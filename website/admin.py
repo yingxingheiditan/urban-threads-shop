@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, send_from_directory, redire
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 import calendar
+from datetime import datetime
 from sqlalchemy import func, extract
 from .forms import ShopItemsForm, OrderForm
 from .models import Product, Order, Customer, HistoricSale, PredictedInventory 
@@ -264,6 +265,66 @@ def admin_page():
     if current_user.id == 1:
         return render_template('admin.html')
     return render_template('404.html')
+
+
+
+############ Data Analysis - Pie Charts#####################################
+@admin.route('/data_analysis')
+def data_analysis():
+    # Get month/year from query params
+    month = request.args.get('month', default=9, type=int)   # default September
+    year = request.args.get('year', default=2025, type=int)  # default 2025
+
+    # Total items sold
+    total_items = db.session.query(func.sum(HistoricSale.QuantitySold))\
+        .filter(extract('month', HistoricSale.DateTime)==month,
+                extract('year', HistoricSale.DateTime)==year).scalar() or 0
+
+    # Total profit (sum of FinalPrice)
+    total_profit = db.session.query(func.sum(HistoricSale.FinalPrice))\
+        .filter(extract('month', HistoricSale.DateTime)==month,
+                extract('year', HistoricSale.DateTime)==year).scalar() or 0
+
+    # Region (SG vs HK)
+    region_data = db.session.query(
+        HistoricSale.Region,
+        func.sum(HistoricSale.QuantitySold)
+    ).filter(extract('month', HistoricSale.DateTime)==month,
+             extract('year', HistoricSale.DateTime)==year)\
+     .group_by(HistoricSale.Region).all()
+
+    region_labels = [r[0] for r in region_data]
+    region_values = [r[1] for r in region_data]
+
+    # Top 10 items
+    top10 = db.session.query(
+        HistoricSale.ItemName,
+        func.sum(HistoricSale.QuantitySold)
+    ).filter(extract('month', HistoricSale.DateTime)==month,
+             extract('year', HistoricSale.DateTime)==year)\
+     .group_by(HistoricSale.ItemName)\
+     .order_by(func.sum(HistoricSale.QuantitySold).desc())\
+     .limit(10).all()
+
+    top10_items_labels = [t[0] for t in top10]
+    top10_items_values = [t[1] for t in top10]
+
+    return render_template(
+        'data_analysis.html',
+        total_items=total_items,
+        total_profit=total_profit,
+        region_labels=region_labels,
+        region_values=region_values,
+        top10_items_labels=top10_items_labels,
+        top10_items_values=top10_items_values
+    )
+
+
+############ Data Analysis -Pie Charts#####################################
+
+
+
+
 
 ##########################  Prediction #################################################
 @admin.route('/predicted_inventory')
