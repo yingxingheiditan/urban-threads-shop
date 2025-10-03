@@ -10,14 +10,18 @@
         <div class="col-md-3">
             <label for="monthSelect" class="form-label">Month</label>
             <select id="monthSelect" class="form-select">
+                {# Jinja loop for months #}
                 {% for m in range(1, 10) %}
-                    <option value="{{ m }}" {% if m == 9 %}selected{% endif %}>{{ ["January","February","March","April","May","June","July","August","September"][m-1] }}</option>
+                    <option value="{{ m }}" {% if m == 9 %}selected{% endif %}>
+                        {{ ["January","February","March","April","May","June","July","August","September"][m-1] }}
+                    </option>
                 {% endfor %}
             </select>
         </div>
         <div class="col-md-3">
             <label for="yearSelect" class="form-label">Year</label>
             <select id="yearSelect" class="form-select">
+                {# Jinja loop for years #}
                 {% for y in [2023,2024,2025] %}
                     <option value="{{ y }}" {% if y == 2025 %}selected{% endif %}>{{ y }}</option>
                 {% endfor %}
@@ -42,27 +46,23 @@
     </div>
 
     <hr style="border-top: 3px solid #ccc;">
-
     <div style="margin-bottom:6.5rem;"></div> 
     
-    <!-- Charts Section -->
-    <!-- Charts Section -->
     <!-- Charts Section -->
     <div class="row mb-5">
         <div class="col-md-6">
             <div class="card p-3">
-            <h5 class="text-center mb-3">SG vs HK Sales</h5>
+                <h5 class="text-center mb-3">SG vs HK Sales</h5>
                 <canvas id="regionPie"></canvas>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card p-3">
-            <h5 class="text-center mb-3">Top 10 Items Sold</h5>
+                <h5 class="text-center mb-3">Top 10 Items Sold</h5>
                 <canvas id="topItemsBar"></canvas>
             </div>
         </div>
     </div>
-
 
 </div>
 
@@ -81,24 +81,25 @@
                 backgroundColor: ['#007bff','#28a745'],
             }]
         },
-  options: {
-        responsive: true,
-        plugins: {
-            tooltip: {
-                enabled: true,
-                callbacks: {
-                    label: function(context) {
-                        const label = context.label || '';
-                        const value = context.raw;
-                        const sum = context.chart._metasets[context.datasetIndex].total;
-                        const percentage = ((value / sum) * 100).toFixed(1) + '%';
-                        return `${label}: ${value} (${percentage})`;
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw;
+                            // ✅ safer calculation of total (no _metasets dependency)
+                            const sum = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / sum) * 100).toFixed(1) + '%';
+                            return `${label}: ${value} (${percentage})`;
+                        }
                     }
                 }
             }
         }
-    }
-});
+    });
 
     // Top 10 Items Horizontal Bar Chart
     const topItemsCtx = document.getElementById('topItemsBar').getContext('2d');

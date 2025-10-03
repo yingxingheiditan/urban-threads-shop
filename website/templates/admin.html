@@ -3,34 +3,39 @@
 {% block title %} Admin Page {% endblock %}
 
 {% block body %}
+<div class="container py-5">
+  <!-- Dashboard Heading -->
+  <h2 class="text-center mb-5 fw-bold" style="letter-spacing: 1px;">Admin Dashboard</h2>
 
-<table class="table table-dark table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Customers</th>
-            <th scope="col">Shop Items</th>
-            <th scope="col">Add Shop Items</th>
-            <th scope="col">View Order</th>
-            <th scope="col">Historic Sales Data</th>
-            <th scope="col">Stock Prediction</th>
-            <th scope="col">Sales Data Analysis</th>
-            
+  <!-- Row of 7 image boxes -->
+  <div class="admin-row">
+    <a href="/customers" class="admin-box">
+      <img src="https://urbanthreads.blob.core.windows.net/admin-page/Customers.png" alt="">
+    </a>
 
-        </tr>
+    <a href="/shop-items" class="admin-box">
+      <img src="https://urbanthreads.blob.core.windows.net/admin-page/Shop%20Items.png" alt="">
+    </a>
 
-    </thead> 
-    <tbody>
-        <tr>
-        <td><a href="/customers">Customers</a></td>
-        <td><a href="/shop-items">Shop Items</a></td>
-        <td><a href="/add-shop-items">Add Shop Items</a></td>
-        <td><a href="/view-orders">View Orders</a></td>
-        <td><a href="/history">Historic Sales Data</a></td>
-        <td><a href="/predicted_inventory">Stock Prediction</a></td>
-        <td><a href="/data_analysis">Sales Data Analysis</a></td>
-        </tr>
-    </tbody>
-</table>
+    <a href="/add-shop-items" class="admin-box">
+      <img src="https://urbanthreads.blob.core.windows.net/admin-page/Add%20Shop%20Items.png" alt="">
+    </a>
 
+    <a href="/view-orders" class="admin-box">
+      <img src="https://urbanthreads.blob.core.windows.net/admin-page/View%20Orders.png" alt="">
+    </a>
 
+    <a href="/history" class="admin-box">
+      <img src="https://urbanthreads.blob.core.windows.net/admin-page/History.png" alt="">
+    </a>
+
+    <a href="/predicted_inventory" class="admin-box">
+      <img src="https://urbanthreads.blob.core.windows.net/admin-page/Stock%20Predictions.png" alt="">
+    </a>
+
+    <a href="/sales-data-analysis" class="admin-box">
+  <img src="https://urbanthreads.blob.core.windows.net/admin-page/Sales%20Data%20Analysis.png" alt="Sales Data Analysis">
+    </a>
+  </div>
+</div>
 {% endblock %}

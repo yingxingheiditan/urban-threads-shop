@@ -42,19 +42,35 @@ body {
 
 /* ===== HERO SECTION ===== */
 .hero {
-  height: 90vh;
-  background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+  height: 60vh; /* smaller hero height */
+  background-color: #ffffff; /* solid white base */
+  background-image: url('https://urbanthreads.blob.core.windows.net/hero-banner/singapore.gif');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain; /* keep GIF proportions, don’t stretch */
+  
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: #111;
   text-align: center;
   padding: 0 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ✅ removed dark overlay completely so white stays pure */
+
+/* Keep text & button styling */
+.hero h1,
+.hero p,
+.hero .btn {
+  position: relative;
+  z-index: 1;
 }
 
 .hero h1 {
-  font-size: 3.5rem;
+  font-size: 3rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   background: linear-gradient(90deg, #00ffcc, #ff00a6);
@@ -63,9 +79,9 @@ body {
 }
 
 .hero p {
-  font-size: 1.25rem;
-  margin-bottom: 25px;
-  color: #333;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #fff; /* pure white */
 }
 
 .hero .btn {
@@ -74,7 +90,7 @@ body {
   color: #fff;
   font-weight: 600;
   border-radius: 40px;
-  padding: 10px 30px;
+  padding: 8px 25px;
   transition: 0.3s;
 }
 
@@ -343,4 +359,51 @@ label {
   .card img {
     height: 300px;
   }
+}
+
+/* ===== ADMIN DASHBOARD ===== */
+
+h2 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* ===== ADMIN DASHBOARD ===== */
+/* ===== ADMIN DASHBOARD ===== */
+.admin-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: nowrap;       /* keep in one row */
+  overflow-x: auto;        /* scroll if too many for small screens */
+  padding: 15px 0;
+}
+
+.admin-box {
+  flex: 0 0 auto;
+  width: 140px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+  text-decoration: none;
+}
+
+.admin-box:hover {
+  transform: translateY(-6px);
+  border: 2px solid #ff00a6;
+  box-shadow: 0 0 6px #ff00a6;
+}
+
+.admin-box img {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
 }
