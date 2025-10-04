@@ -42,12 +42,12 @@ body {
 
 /* ===== HERO SECTION ===== */
 .hero {
-  height: 60vh; /* smaller hero height */
+  height: 60vh; /* hero height */
   background-color: #ffffff; /* solid white base */
-  background-image: url('https://urbanthreads.blob.core.windows.net/hero-banner/singapore.gif');
+  background-image: url('https://urbanthreads.blob.core.windows.net/hero-banner/singapore%20hero%20banner.png');
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain; /* keep GIF proportions, don’t stretch */
+  background-size: cover; /* ✅ fills full width & height */
   
   display: flex;
   flex-direction: column;
@@ -58,8 +58,6 @@ body {
   position: relative;
   overflow: hidden;
 }
-
-/* ✅ removed dark overlay completely so white stays pure */
 
 /* Keep text & button styling */
 .hero h1,
@@ -81,7 +79,7 @@ body {
 .hero p {
   font-size: 1.1rem;
   margin-bottom: 20px;
-  color: #fff; /* pure white */
+  color: #fff; /* pure white text for contrast */
 }
 
 .hero .btn {
