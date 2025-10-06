@@ -56,7 +56,7 @@ def add_to_cart(item_id):
     item_to_add = Product.query.get(item_id)
     if not item_to_add:
         flash('Item not found.', 'danger')
-        return redirect(request.referrer)
+        return redirect(request.referrer or url_for('views.home'))
 
     existing_item = Cart.query.filter_by(product_link=item_id, customer_link=current_user.id).first()
     if existing_item:
@@ -69,7 +69,8 @@ def add_to_cart(item_id):
         db.session.commit()
         flash(f'{item_to_add.product_name} added to cart.', 'success')
 
-    return redirect(url_for('views.show_cart'))
+    # ✅ Stay on same page (go back to referring URL)
+    return redirect(request.referrer or url_for('views.home'))
 
 # ======================
 # 🛒 SHOW CART
@@ -146,7 +147,7 @@ def remove_cart(cart_id):
     flash(f'{product_name} removed from cart.', 'info')
     return redirect(url_for('views.show_cart'))
 
-    # ======================
+# ======================
 # 💳 CHECKOUT PAGE
 # ======================
 @views.route('/checkout')

@@ -35,14 +35,16 @@
                 <span class="fw-bold">S$ {{ '%.2f'|format(item.price) }}</span>
               </div>
 
+              <!-- ✅ In Stock / Out of Stock Badge -->
               {% if item.in_stock > 0 %}
-                <!-- Fake ID of 0, you can map these later if stored in DB -->
+                <span class="badge bg-success mb-2">In Stock</span>
                 <form action="{{ url_for('views.add_to_cart', item_id=1) }}" method="POST">
                   <button type="submit" class="btn btn-dark btn-sm w-100">
                     <i class="fa fa-cart-plus"></i> Add to Cart
                   </button>
                 </form>
               {% else %}
+                <span class="badge bg-secondary mb-2">Out of Stock</span>
                 <button class="btn btn-secondary btn-sm w-100" disabled>
                   Out of Stock
                 </button>
@@ -73,6 +75,10 @@
 .btn-secondary[disabled] {
   opacity: 0.7;
   cursor: not-allowed;
+}
+.badge.bg-secondary {
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
 }
 </style>
 {% endblock %}
