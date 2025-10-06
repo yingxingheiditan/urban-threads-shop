@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Checkout{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+  <h2 class="text-center mb-5 fw-bold" style="letter-spacing: 1px;">🧾 Checkout</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+
+      <!-- ORDER SUMMARY -->
+      <div class="card shadow-lg border-0 mb-4">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3">Order Summary</h5>
+
+          <ul class="list-group list-group-flush">
+            {% for item in cart %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="fw-semibold">{{ item.product.product_name }}</span><br>
+                  <small class="text-muted">Qty: {{ item.quantity }}</small>
+                </div>
+                <span class="fw-semibold">S$ {{ '%.2f'|format(item.product.current_price * item.quantity) }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <hr>
+          <div class="d-flex justify-content-between mt-2">
+            <span>Subtotal:</span>
+            <span class="fw-semibold">S$ {{ '%.2f'|format(subtotal) }}</span>
+          </div>
+          <div class="d-flex justify-content-between mt-1">
+            <span>Shipping Fee:</span>
+            <span class="fw-semibold">S$ {{ '%.2f'|format(shipping) }}</span>
+          </div>
+          <div class="d-flex justify-content-between mt-2 border-top pt-3">
+            <h5 class="fw-bold">Total:</h5>
+            <h5 class="fw-bold text-success">S$ {{ '%.2f'|format(total) }}</h5>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHIPPING DETAILS -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3">Shipping Details</h5>
+          <form>
+            <div class="mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" id="name" class="form-control" placeholder="John Tan" required>
+            </div>
+            <div class="mb-3">
+              <label for="address" class="form-label">Address</label>
+              <textarea id="address" class="form-control" rows="2" placeholder="123 Orchard Road, Singapore 238888" required></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" id="phone" class="form-control" placeholder="+65 9123 4567" required>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- PAYMENT OPTIONS -->
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+          <h5 class="fw-bold mb-3">Payment Method</h5>
+          <div class="d-grid gap-3">
+            <button class="btn btn-outline-dark py-3 w-100" type="button" id="creditBtn">
+              <i class="fa-solid fa-credit-card me-2"></i> Pay with Credit / Debit Card
+            </button>
+            <button class="btn btn-outline-success py-3 w-100" type="button" id="paynowBtn">
+              <i class="fa-solid fa-qrcode me-2"></i> Pay with PayNow
+            </button>
+          </div>
+
+          <!-- CREDIT CARD FORM -->
+          <form id="creditForm" class="mt-4 d-none" action="{{ url_for('views.place_order') }}" method="POST">
+            <div class="mb-3">
+              <label for="cardNumber" class="form-label">Card Number</label>
+              <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" required>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="expiry" class="form-label">Expiry Date</label>
+                <input type="text" id="expiry" class="form-control" placeholder="MM/YY" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="text" id="cvv" class="form-control" placeholder="123" required>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-light w-100 py-3 fw-semibold border shadow-sm mt-3">
+              ✅ Confirm & Pay S$ {{ '%.2f'|format(total) }}
+            </button>
+          </form>
+
+          <!-- PAYNOW OPTION -->
+          <div id="paynowForm" class="mt-4 text-center d-none">
+            <h6 class="fw-bold mb-3">Scan this QR code to pay with PayNow</h6>
+            <img src="https://urbanthreads.blob.core.windows.net/icons/paynow-qr.png"
+                 alt="PayNow QR"
+                 class="img-fluid rounded shadow-sm mb-3"
+                 style="max-width: 250px;">
+            <form action="{{ url_for('views.place_order') }}" method="POST">
+              <button type="submit" class="btn btn-light w-100 py-3 fw-semibold border shadow-sm">
+                ✅ I’ve Paid via PayNow
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOGGLE SCRIPT -->
+<script>
+document.getElementById('creditBtn').addEventListener('click', function() {
+  document.getElementById('creditForm').classList.toggle('d-none');
+  document.getElementById('paynowForm').classList.add('d-none');
+  document.getElementById('creditForm').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.getElementById('paynowBtn').addEventListener('click', function() {
+  document.getElementById('paynowForm').classList.toggle('d-none');
+  document.getElementById('creditForm').classList.add('d-none');
+  document.getElementById('paynowForm').scrollIntoView({ behavior: 'smooth' });
+});
+</script>
+
+<style>
+.card { border-radius: 10px; }
+.btn-light {
+  border-radius: 10px;
+  font-size: 1.1rem;
+  transition: 0.3s ease;
+}
+.btn-light:hover {
+  background: linear-gradient(90deg, #00ff88, #ff00a6);
+  color: white;
+  border: none;
+}
+.btn-outline-success:hover {
+  background: #00ff88;
+  color: white;
+}
+.btn-outline-dark:hover {
+  background: #000;
+  color: #fff;
+}
+h2, h5 { color: #111; }
+</style>
+{% endblock %}

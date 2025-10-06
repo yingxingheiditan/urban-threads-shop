@@ -1,18 +1,159 @@
 {% extends "base.html" %}
-{% block title %}Cart{% endblock %}
+{% block title %}My Cart{% endblock %}
 
 {% block body %}
-<div class="container mt-5 text-center">
+<div class="container mt-5">
+  <h2 class="fw-bold text-center mb-4">🛒 My Cart</h2>
+
   {% if cart|length == 0 %}
-  <h2 class="fw-bold mb-4">🛒 My Cart</h2>
-  <p class="lead text-muted">Your cart is empty.</p>
-  <a href="{{ url_for('views.new_arrivals') }}" class="btn btn-success mt-3">
-    Shop Now
-  </a>
+    <p class="lead text-muted text-center">Your cart is empty.</p>
+    <div class="text-center">
+      <a href="{{ url_for('views.all') }}" class="btn btn-success mt-3">Shop Now</a>
+    </div>
   {% else %}
     {% for item in cart %}
-    <!-- GENERATE CODE HERE-->
+      <div class="card mb-3 mx-auto shadow-sm" style="max-width: 700px;">
+        <div class="row g-0 align-items-center">
+          
+          <!-- Product Image -->
+          <div class="col-md-4">
+            <img src="{{ item.product.product_picture }}" 
+                 class="img-fluid rounded-start" 
+                 alt="{{ item.product.product_name }}">
+          </div>
+
+          <!-- Product Details -->
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title fw-bold">{{ item.product.product_name }}</h5>
+              <p class="card-text mb-1">Price: S$ {{ '%.2f'|format(item.product.current_price) }}</p>
+              
+              <!-- Quantity Controls -->
+              <div class="quantity-box mb-2">
+                <button class="quantity-btn minus-btn" data-id="{{ item.id }}">−</button>
+                <span class="quantity-value" id="qty-{{ item.id }}">{{ item.quantity }}</span>
+                <button class="quantity-btn plus-btn" data-id="{{ item.id }}">+</button>
+              </div>
+
+              <p class="card-text fw-semibold">
+                Subtotal: S$ <span id="subtotal-{{ item.id }}">{{ '%.2f'|format(item.product.current_price * item.quantity) }}</span>
+              </p>
+
+              <!-- Remove button -->
+              <form action="{{ url_for('views.remove_cart', cart_id=item.id) }}" method="POST" class="mt-2">
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                  <i class="fa fa-trash"></i> Remove
+                </button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
     {% endfor %}
+
+    <hr class="my-4">
+    <div class="text-end">
+      <h4>Subtotal: S$ <span id="subtotal">{{ '%.2f'|format(amount) }}</span></h4>
+      <h5>Shipping Fee: S$ 30.00</h5>
+      <h3 class="fw-bold">Total: S$ <span id="total">{{ '%.2f'|format(total) }}</span></h3>
+     <a href="{{ url_for('views.checkout') }}" class="btn btn-success btn-lg mt-3">Proceed to Checkout</a>
+    </div>
   {% endif %}
 </div>
+
+<!-- ✅ STYLES -->
+<style>
+.quantity-box {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 10px;
+}
+
+.quantity-btn {
+  background-color: #fff;        /* white buttons */
+  color: #111;                   /* black text */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.quantity-btn:hover {
+  background: linear-gradient(90deg, #ff00a6, #00ff88);
+  color: #fff;
+  border: none;
+  transform: scale(1.08);
+}
+
+.quantity-value {
+  font-size: 1rem;
+  font-weight: 600;
+  width: 30px;
+  text-align: center;
+}
+
+.btn-outline-danger {
+  border-radius: 6px;
+  padding: 4px 10px;
+}
+
+.btn-outline-danger:hover {
+  background-color: #ff4c4c;
+  color: white;
+}
+</style>
+
+<!-- ✅ JAVASCRIPT (Live Update) -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const shippingFee = 30;
+
+  // Update totals after change
+  function updateCartDisplay(data) {
+    document.getElementById("subtotal").textContent = data.amount.toFixed(2);
+    document.getElementById("total").textContent = (data.amount + shippingFee).toFixed(2);
+  }
+
+  // Handle +
+  document.querySelectorAll(".plus-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cartId = btn.getAttribute("data-id");
+      fetch(`/pluscart?cart_id=${cartId}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById(`qty-${cartId}`).textContent = data.quantity;
+          updateCartDisplay(data);
+          location.reload(); // reload for full consistency
+        });
+    });
+  });
+
+  // Handle -
+  document.querySelectorAll(".minus-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cartId = btn.getAttribute("data-id");
+      fetch(`/minuscart?cart_id=${cartId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.quantity > 0) {
+            document.getElementById(`qty-${cartId}`).textContent = data.quantity;
+          } else {
+            location.reload(); // item removed if quantity hits 0
+          }
+          updateCartDisplay(data);
+          location.reload();
+        });
+    });
+  });
+});
+</script>
 {% endblock %}

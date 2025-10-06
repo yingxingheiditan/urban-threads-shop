@@ -12,19 +12,23 @@
       {% for p in items %}
         <div class="col-6 col-md-4 col-lg-3">
           <div class="card border-0 shadow-sm h-100" style="transition: transform 0.2s ease;">
-            
-            <!-- Product Image -->
+
+            <!-- 🖼️ Product Image -->
             <div class="position-relative overflow-hidden">
               <img src="{{ p.product_picture }}" 
-                   class="card-img-top" 
-                   alt="{{ p.product_name }}" 
-                   style="height: 280px; object-fit: cover; border-radius: 6px;">
-              {% if p.flash_sale %}
+                   class="card-img-top"
+                   alt="{{ p.product_name }}"
+                   style="height: 280px; object-fit: cover; border-radius: 6px;
+                          opacity: {% if p.in_stock == 0 %}0.5{% else %}1{% endif %};">
+
+              {% if p.in_stock == 0 %}
+                <span class="badge bg-secondary position-absolute top-0 start-0 m-2">SOLD OUT</span>
+              {% elif p.flash_sale %}
                 <span class="badge bg-danger position-absolute top-0 start-0 m-2">FLASH SALE</span>
               {% endif %}
             </div>
 
-            <!-- Product Info -->
+            <!-- 🛍️ Product Info -->
             <div class="card-body text-center">
               <h6 class="card-title text-uppercase fw-semibold text-truncate">{{ p.product_name }}</h6>
 
@@ -37,16 +41,20 @@
                 {% endif %}
               </div>
 
+              <!-- 🏷️ Stock & Cart Button -->
               {% if p.in_stock > 0 %}
                 <span class="badge bg-success mb-2">In Stock</span>
+                <form action="{{ url_for('views.add_to_cart', item_id=p.id) }}" method="POST">
+                  <button type="submit" class="btn btn-dark btn-sm w-100">
+                    <i class="fa fa-cart-plus"></i> Add to Cart
+                  </button>
+                </form>
               {% else %}
                 <span class="badge bg-secondary mb-2">Out of Stock</span>
+                <button class="btn btn-secondary btn-sm w-100" disabled>
+                  Out of Stock
+                </button>
               {% endif %}
-
-              <a href="/add-to-cart/{{ p.id }}" 
-                 class="btn btn-dark btn-sm w-100">
-                Add to Cart
-              </a>
             </div>
           </div>
         </div>
@@ -55,19 +63,31 @@
   {% endif %}
 </div>
 
-<!-- Subtle hover + button style -->
+<!-- 🎨 Styles -->
 <style>
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
+
 .btn-dark:hover {
   background: linear-gradient(90deg, #ff00a6, #00ff88);
   color: #fff;
   border: none;
 }
+
 .card-title {
   color: #111;
+  letter-spacing: 0.5px;
+}
+
+.btn-secondary[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.badge.bg-secondary {
+  font-size: 0.75rem;
   letter-spacing: 0.5px;
 }
 </style>

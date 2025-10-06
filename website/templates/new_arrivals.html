@@ -2,26 +2,77 @@
 {% block title %}New Arrivals{% endblock %}
 
 {% block body %}
-<div class="container mt-5 py-5">
-  <h2 class="mb-4 text-center fw-bold" style="letter-spacing:1px;"> New Arrivals </h2>
-  
-  <div class="row">
-    {% for item in items %}
-      <div class="col-md-4 col-sm-6 mb-4">
-        <div class="card h-100 shadow-sm border-0">
-          <img src="{{ item.image_url }}" 
-               class="card-img-top"
-               alt="{{ item.name }}"
-               style="height: 400px; object-fit: cover; border-radius: 10px;">
+<div class="container py-5">
+  <h2 class="text-center mb-4 fw-bold" style="letter-spacing: 1px;">New Arrivals</h2>
 
-          <div class="card-body text-center">
-            <h5 class="card-title fw-semibold">{{ item.name }}</h5>
-            <p class="card-text text-muted">SGD {{ "%.2f"|format(item.price) }}</p>
-            <a href="#" class="btn btn-dark w-100">Shop Now</a>
+  {% if items|length == 0 %}
+    <p class="text-center text-muted">No new arrivals available at the moment.</p>
+  {% else %}
+    <div class="row g-4 justify-content-center">
+      {% for item in items %}
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="card border-0 shadow-sm h-100" style="transition: transform 0.2s ease;">
+            
+            <!-- 🖼️ Product Image -->
+            <div class="position-relative overflow-hidden">
+              <img src="{{ item.image_url }}" 
+                   class="card-img-top" 
+                   alt="{{ item.name }}" 
+                   style="height: 280px; object-fit: cover; border-radius: 6px; opacity: {{ 0.5 if item.in_stock == 0 else 1 }};">
+
+              {% if item.in_stock == 0 %}
+                <span class="badge bg-secondary position-absolute top-0 start-0 m-2">SOLD OUT</span>
+              {% else %}
+                <span class="badge bg-success position-absolute top-0 start-0 m-2">NEW</span>
+              {% endif %}
+            </div>
+
+            <!-- 🏷️ Product Info -->
+            <div class="card-body text-center">
+              <h6 class="card-title text-uppercase fw-semibold text-truncate">{{ item.name }}</h6>
+
+              <div class="mb-2">
+                <span class="fw-bold">S$ {{ '%.2f'|format(item.price) }}</span>
+              </div>
+
+              {% if item.in_stock > 0 %}
+                <!-- Fake ID of 0, you can map these later if stored in DB -->
+                <form action="{{ url_for('views.add_to_cart', item_id=1) }}" method="POST">
+                  <button type="submit" class="btn btn-dark btn-sm w-100">
+                    <i class="fa fa-cart-plus"></i> Add to Cart
+                  </button>
+                </form>
+              {% else %}
+                <button class="btn btn-secondary btn-sm w-100" disabled>
+                  Out of Stock
+                </button>
+              {% endif %}
+            </div>
           </div>
         </div>
-      </div>
-    {% endfor %}
-  </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 </div>
+
+<!-- ✨ Matching Styles -->
+<style>
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.btn-dark:hover {
+  background: linear-gradient(90deg, #ff00a6, #00ff88);
+  color: #fff;
+  border: none;
+}
+.card-title {
+  color: #111;
+  letter-spacing: 0.5px;
+}
+.btn-secondary[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+</style>
 {% endblock %}
