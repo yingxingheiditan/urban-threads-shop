@@ -15,4 +15,5 @@ source proj_env/bin/activate
 
 flask --app main run
 
-test
+## Project Demo Video
+[Demo video](https://drive.google.com/file/d/1Xk2TEU-KyHHXD6iwDNfLAnU8hZvuKOJD/view?usp=sharing)
